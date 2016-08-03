@@ -19,3 +19,4 @@ class HuxiuItem(scrapy.Item):
     link = scrapy.Field()
     desc = scrapy.Field()
     posttime = scrapy.Field()
+    author = scrapy.Field()
