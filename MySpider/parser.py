@@ -1,76 +1,82 @@
 from lxml import etree
 import re
-import items
+
 
 class HTMLParser(object):
     def geturls(self, currentpage):
         pass
 
-    def getpagedata(self, currentpage, baseurl, filename):
-
+    def getpagedata(self, currentpage):
         try:
-            pageTree = etree.HTML(currentpage)#.lower().decode('utf-8'))
-
-            """get current page's info"""
-            movies = pageTree.xpath(
+            pagetree = etree.HTML(currentpage)#.lower().decode('utf-8'))
+            """get current page's movies"""
+            movies = pagetree.xpath(
                 '//ol[@class="grid_view"]/li/div[@class="item"]'
             )
 
+            movielist = []
             for movie in movies:
-                item = items.DouBanItem()
+                itemdict = {}
                 """index"""
-                item.index = movie.xpath(
+                itemdict["index"] = movie.xpath(
                     'div[@class="pic"]/em/text()'
                 )[0]
 
                 # header
-                """title"""
-                item.title = movie.xpath(
+                # title
+                itemdict["title"] = movie.xpath(
                     'div[@class="info"]/div[@class="hd"]/a/span[@class="title"]/text()'
-                )[0]
+                )[0].encode('utf-8')
 
                 # body
-                """staff"""
-                item.staff = movie.xpath(
+                # staff
+                itemdict["staff"] = movie.xpath(
                     'div[@class="info"]/div[@class="bd"]/p/text()'
-                )[0]
+                )[0].encode('utf-8')
 
-                """classification"""
-                item.classification = movie.xpath(
+                # classification
+                itemdict["classification"] = movie.xpath(
                     'div[@class="info"]/div[@class="bd"]/p/text()'
-                )[1]
+                )[1].encode('utf-8')
 
-                """star"""
-                item.star = movie.xpath(
+                # star
+                itemdict["star"] = movie.xpath(
                     'div[@class="info"]/div[@class="bd"]/div[@class="star"]/span[@class="rating_num"]/text()'
                 )[0]
 
-                """quote"""
+                # quote
                 try:
-                    item.quote = movie.xpath(
+                    itemdict["quote"] = movie.xpath(
                         'div[@class="info"]/div[@class="bd"]/p[@class="quote"]/span[@class="inq"]/text()'
-                    )[0]
-                except Exception,e:
-                    item.quote = ""
+                    )[0].encode('utf-8')
+                except Exception, e:
+                    itemdict["quote"] = ""
 
-                itemdic = {"index":item.index, "title":item.title.encode('utf-8'), "classification":item.classification.encode('utf-8'), "staff":item.staff.encode('utf-8'), "star":item.star, "quote":item.quote.encode('utf-8')}
+                for item in itemdict:
+                    itemdict[item] = re.sub('\n', '', itemdict[item])
+                    itemdict[item] = re.sub(' +', ' ', itemdict[item])
 
-                for item in itemdic:
-                    itemdic[item] = re.sub('\n', '', itemdic[item])
-                    itemdic[item] = re.sub(' +', ' ', itemdic[item])
+                # metadata
+                itemdata = (
+                    itemdict["index"],
+                    itemdict["title"],
+                    itemdict["star"],
+                    itemdict["staff"],
+                    itemdict["classification"],
+                    itemdict["quote"]
+                )
 
-                """output"""
-                itemdata = (itemdic["index"], itemdic["title"], itemdic["star"], itemdic["staff"], itemdic["classification"], itemdic["quote"])
-                OutPuter().outputtocsv(itemdata, filename)
+                movielist.append(itemdata)
 
-            """get next page's url"""
+            # get next page
             try:
-                nextpageurl = baseurl + pageTree.xpath('//span[@class="next"]/a/@href')[0]
+                nexturl = pagetree.xpath('//span[@class="next"]/a/@href')[0]
             except Exception, e:
-                return None
+                print e
+                return movielist, None
 
         except Exception, e:
             print e
-            return nextpageurl
+            return movielist, nexturl
 
-        return nextpageurl
+        return movielist, nexturl

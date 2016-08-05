@@ -5,21 +5,20 @@ class URLManager(object):
         self.newurls = []
         self.usedurls = set()
 
-    def checkurlisnotexist(self, newurl):
+    def isurlexist(self, newurl):
         if newurl in self.newurls or newurl in self.usedurls:
             return False
         return True
 
-    def addurl(self, firstURL):
-        if self.checkurlisnotexist(firstURL):
+    def addurl(self, newurl):
+        if self.isurlexist(newurl):
             #self.newurls.add(firstURL)
-            self.newurls.append(firstURL)
+            self.newurls.append(newurl)
 
-    def addurls(self, urls):
-        for url in urls:
-            if self.checkurlisnotexist(url):
-                self.newurls.add(url)
-                #self.newurls.append(url)
+    def addurls(self, newurls):
+        for newurl in newurls:
+            if self.isurlexist(newurl):
+                self.newurls.add(newurl)
 
     def geturl(self):
         nexturl = self.newurls.pop(0)
