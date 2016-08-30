@@ -19,6 +19,7 @@ class SpiderManager(object):
     def crawl(self):
 
         try:
+            self.DownLoder.dongtai()
             #add columns to csv file
             indexs = ("index", "title", "star", "staff", "classification", "quote")
             self.CsvOutPuter.outputtocsv(indexs, self.filename)
