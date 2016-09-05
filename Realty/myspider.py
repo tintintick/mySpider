@@ -1,5 +1,9 @@
 # /usr/bin/python
-# coding:utf-8
+# -*- coding: utf-8 -*-
+import time
+import random
+import os
+
 import urlmanager
 import downloader
 import parser
@@ -7,6 +11,7 @@ import outputer
 
 
 class SpiderManager(object):
+
     def __init__(self, starturl, baseurl, filename):
         self.starturl = starturl
         self.baseurl = baseurl
@@ -18,43 +23,60 @@ class SpiderManager(object):
 
     def crawl(self):
 
+        logpath = './deal_chaoyang.csv'
+        if os.path.exists(logpath):
+            os.remove(logpath)
+        # try:
+        # currentpage = self.DownLoder.getpage("http://bj.lianjia.com/chengjiao/chaoyang")
+        # except Exception,e:
+        #     print e
+
         try:
-            self.DownLoder.dongtai()
-            #add columns to csv file
-            indexs = ("index", "title", "star", "staff", "classification", "quote")
-            self.CsvOutPuter.outputtocsv(indexs, self.filename)
+            # add columns to csv file
+            features = ("name", "type", "square", "direction", "furnish", "totalprice", "unitprice", "floortype", "floors", "year", "structure", "dealdate", "other")
+            self.CsvOutPuter.outputtocsv(features, self.filename)
 
             self.URLManager.addurl(self.starturl)
 
+            # nextnum = 2
             while True:
+                time.sleep(random.randint(1, 3))
                 currenturl = self.URLManager.geturl()
+
+                # static page
                 currentpage = self.DownLoder.getpage(currenturl)
 
+                # dynamic page
+                # currentpage = self.DownLoder.get_dynamic_page(currenturl)
+
                 if currentpage is not None:
-                    # urls = self.HTMLParser.getUrls(currentpage)
-                    items, nexturl = self.HTMLParser.getpagedata(currentpage)
+                    items, nexturl = self.HTMLParser.getinfo(currentpage)
+                    print nexturl
+                    # items = self.HTMLParser.getinfo(currentpage)
+
                     for item in items:
                         self.CsvOutPuter.outputtocsv(item, self.filename)
 
                     if nexturl is not None:
-                        nexturl = self.baseurl + nexturl
-                        self.URLManager.addurl(nexturl)
+                        self.URLManager.addurl(self.baseurl + nexturl)
+                    # if nextnum <= 100:
+                    #     self.URLManager.addurl(self.baseurl + "/chengjiao/chaoyang/pg" + str(nextnum))
+                    #     nextnum += 1
+                    #     print nextnum
                     else:
                         break
+
+                else:
+                    print currenturl + "contains no content!"
+                    break
 
         except Exception, e:
             print e
 
-            # data = self.HTMLParser.getData(currentpage)
-            # self.OutPuter.combineData(data)
-            # self.OutPuter.saveData()
 
+url_start = "http://bj.lianjia.com/chengjiao/chaoyang/"
+url_base = "http://bj.lianjia.com"
+output_filename = "deal_chaoyang.csv"
 
-#if __name__ == "__main__":
-#    def main():
-url_start = "https://movie.douban.com/top250"
-url_base = "https://movie.douban.com/top250"
-outputfilename = "output.csv"
-
-objmanager = SpiderManager(url_start, url_base, outputfilename)
-objmanager.crawl()
+obj_manager = SpiderManager(url_start, url_base, output_filename)
+obj_manager.crawl()
