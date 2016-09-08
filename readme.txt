@@ -1,2 +1,1 @@
-my git learning.
-fast-forward.
+COdeMinder!
