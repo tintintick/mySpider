@@ -1,16 +1,9 @@
 from math import log
-<<<<<<< HEAD
 import sys
 
 def createDataSet():
     dataset = [[1,1,'y'],[1,1,'y'],[1,0,'n'],[0,1,'n'],[0,1,'n'], [1,0,'may'], [1,0,'may']]
     dataset1 = [[1,1,'y'],[1,1,'y'],[1,0,'n'],[0,1,'n'],[0,1,'n'], [0,0,'may']]
-=======
-
-def createDataSet():
-    dataset = [[1,1,'y'],[1,1,'y'],[1,0,'n'],[0,1,'n'],[0,1,'n']]#, [0,0,'may']]
-    dataset1 = [[1,1,'y'],[1,1,'y'],[1,0,'n'],[0,1,'n'],[0,1,'n'], [2,0,'may']]
->>>>>>> 0e866b7d6900a4b41e5a2f047c66c2a57b8167e7
     labels = ['no surfacing', 'fippers']
     return dataset, dataset1, labels
 
@@ -73,7 +66,6 @@ def majorityCnt(col):
 
 def createDecisionTree(dataset, labels):
     classlist = [example[-1] for example in dataset]
-<<<<<<< HEAD
 
     if classlist.count(classlist[0]) is len(dataset): # Classes are equal
 #        print 'yezi:{}'.format(dataset)
@@ -93,14 +85,6 @@ def createDecisionTree(dataset, labels):
     if bestfeat is -1: # Feature vectors are equal
         return majorityCnt([example[-1] for example in dataset])
 
-=======
-    if len(dataset[0]) is 1:
-        return majorityCnt(dataset[0])
-    if classlist.count(classlist[0]) is len(dataset):
-        return classlist[0]
-
-    bestfeat = chooseBestFeature(dataset, labels)
->>>>>>> 0e866b7d6900a4b41e5a2f047c66c2a57b8167e7
     bestlabel = labels[bestfeat]
     del(labels[bestfeat])
     dTree = {bestlabel:{}}
@@ -109,10 +93,7 @@ def createDecisionTree(dataset, labels):
     uniquevals = set(bestcol)
     for value in uniquevals:
         subset = splitDataSet(dataset, bestfeat, value)
-<<<<<<< HEAD
         print subset
-=======
->>>>>>> 0e866b7d6900a4b41e5a2f047c66c2a57b8167e7
         sublabels = labels
         dTree[bestlabel][value] = createDecisionTree(subset, sublabels)
 
@@ -120,10 +101,7 @@ def createDecisionTree(dataset, labels):
 
 dataset, dataset1, labels = createDataSet()
 #print createDecisionTree(dataset, labels) # {'no surfacing': {0: 'n', 1: {'fippers': {0: 'n', 1: 'y'}}}}
-<<<<<<< HEAD
 print dataset
-=======
->>>>>>> 0e866b7d6900a4b41e5a2f047c66c2a57b8167e7
 print createDecisionTree(dataset1, labels)
 
 #testcol = [1,0,2,1,2,3,1,4,0,2,1]
