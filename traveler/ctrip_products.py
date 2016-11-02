@@ -1,9 +1,8 @@
-import os
 import requests
-
+import json
+import re
 
 url = "http://vacations.ctrip.com/Package-Booking-Promotion/jsondataprovider/Query"
-
 data = {
 		"Data": '{"GroupId":"1","ChannelId":"1","DestinationId":"0","DepartureDate":null,"DepartureCityId":"0","Channel":"1","PageIndex":1,"SaleCity":0}',
 		"QType": "queryv3"
@@ -20,4 +19,3 @@ header = {
 	}
 
 response = requests.post(url, data=data, headers=header)
-print response.content
